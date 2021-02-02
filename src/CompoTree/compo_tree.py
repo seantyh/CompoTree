@@ -12,7 +12,7 @@ class ComponentTree:
                 self.rev_map.setdefault(dc, set()).add(charac)
     
     @classmethod
-    def create(cls, ids_path=None):
+    def load(cls, ids_path=None):
         idsmap = load_idsmap(ids_path)        
         ctree = ComponentTree(idsmap)
         return ctree
