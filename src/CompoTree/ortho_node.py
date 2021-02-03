@@ -1,4 +1,6 @@
 from itertools import chain
+from typing import List
+from .struct_cursor import StructureCursor
 
 class OrthoNode:
     def __init__(self, idc, children):
@@ -13,7 +15,50 @@ class OrthoNode:
                 "".join(str(x) for x in self.children),
                 f"({self.flag})" if self.flag else ""
         )
-        
+    
+    def __eq__(self, other):
+        if not isinstance(other, OrthoNode):
+            return False
+        return self.glyph == other.glyph and \
+               self.idc == other.idc and \
+               self.children == other.children and \
+               self.flag == other.flag
+
+    def __hash__(self):
+        return hash(str(self))
+
+    def __getitem__(self, idx_list:List[StructureCursor]):
+        if not isinstance(idx_list, list):
+            idx_list = [idx_list]
+
+        if len(idx_list) > 1:
+            idx = idx_list[0]
+            compo = self[idx]
+            if isinstance(compo, list) and len(compo) == 1:
+                compo = compo[0]
+
+            if isinstance(compo, OrthoNode):
+                return compo[idx_list[1:]]
+            else:
+                return compo
+        else:
+            idx = idx_list[0]
+            if not isinstance(idx, StructureCursor):
+                raise IndexError("Expect StructureCursor as index")
+                        
+            if self.flag and idx.flag not in self.flag:
+                return None
+
+            if idx.idc == self.idc:
+                if idx.pos >= len(self.children):
+                    raise IndexError("structure cursor's position is out of bound")
+                rets = self.children[idx.pos]
+                if isinstance(rets, list) and len(rets) == 1:
+                    return rets[0]
+
+            else:
+                raise IndexError("IDC does not match")
+
     def print_tree(self, depth=0):    
         if self.flag:
             flag_str = f"({self.flag})"
@@ -67,7 +112,7 @@ class OrthoNode:
         elif use_flag == "all":
             variants = list(chain.from_iterable(chlist))
         else:
-            variants = [x for x in chlist if use_flag in x.flag]
+            variants = [x for x in chlist if (not x.flag) or use_flag in x.flag]
         return variants
 
     @classmethod
