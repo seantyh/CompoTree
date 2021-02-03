@@ -8,7 +8,7 @@ def load_idsmap(ids_path=None):
 
     fin = open(ids_path, "r", encoding="UTF-8")
     ids_map = {}
-    for ln_i, ln in tqdm(enumerate(fin)):  
+    for ln_i, ln in enumerate(fin):  
         if ln.startswith("#"): continue
         parts = ln.strip().split("\t")
         if len(parts) < 3:

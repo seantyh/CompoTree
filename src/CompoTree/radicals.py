@@ -32,6 +32,7 @@ class Radicals:
     def __init__(self, radical_map, rs_index):
         self.radical_map = radical_map
         self.rs_index = rs_index
+        self.ts_radicals = self.build_radical_variants(radical_map)
 
     @classmethod
     def load(cls, data_dir=None):
@@ -45,5 +46,18 @@ class Radicals:
 
         return radicals
     
-    def query(self, ch):
-        return self.rs_index.get(ch, ("", 0))
+    def query(self, ch, norm_trad=False):
+        rad = self.rs_index.get(ch, ("", 0))
+        if norm_trad:
+            rad = (self.ts_radicals.get(rad[0], rad[0]), rad[1])
+        return rad
+        
+
+    def build_radical_variants(self, radical_map):
+        rad_vars = {}
+        for rid, radical in radical_map.items():
+            if rid.endswith("'"):
+                # it's a simplified radical
+                trad_radical = radical_map[rid[:-1]]
+                rad_vars[radical] = trad_radical
+        return rad_vars
