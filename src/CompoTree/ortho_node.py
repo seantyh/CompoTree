@@ -15,6 +15,13 @@ class OrthoNode:
                 "".join(str(x) for x in self.children),
                 f"({self.flag})" if self.flag else ""
         )
+
+    def __str__(self):        
+        return "{}{}{}".format(
+                self.idc, 
+                "".join(str(x) for x in self.children),
+                f"({self.flag})" if self.flag else ""
+        )
     
     def __eq__(self, other):
         if not isinstance(other, OrthoNode):
@@ -91,6 +98,10 @@ class OrthoNode:
         else:
             return 1
 
+    def get_component(self, idx, use_flag="first"):
+        chlist = self.children[idx]
+        return self.get_variants(chlist, use_flag)
+
     def leaf_components(self, use_flag="first"): 
         leaves = []
         child_variants = [
@@ -110,7 +121,7 @@ class OrthoNode:
         if use_flag == "first":
             variants = chlist[0]
         elif use_flag == "all":
-            variants = list(chain.from_iterable(chlist))
+            variants = chlist
         else:
             variants = [x for x in chlist if (not x.flag) or use_flag in x.flag]
         return variants
