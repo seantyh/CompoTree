@@ -3,6 +3,7 @@ from itertools import chain
 from typing import List
 from copy import deepcopy
 from .struct_cursor import StructureCursor
+from .ortho_node import OrthoNode
 from .load_data import load_idsmap
 
 class ComponentTree:
@@ -20,8 +21,8 @@ class ComponentTree:
         ctree = ComponentTree(idsmap)
         return ctree
 
-    def select(self, ch, cursors:List[StructureCursor], use_flag="first", return_one=True):
-        nodes = self.query(ch, use_flag=use_flag, max_depth=len(cursors))
+    def select(self, ch, cursors:List[StructureCursor], use_flag="first", return_one=True):        
+        nodes = self.query(ch, use_flag=use_flag, max_depth=len(cursors))                
         if nodes:            
             ret = [x[cursors] for x in nodes]
             ret = [x for x in ret if x]
@@ -42,18 +43,30 @@ class ComponentTree:
                 return False
         return True
 
+    def filter_flag(self, nodes: List[OrthoNode], use_flag="first"):
+        if use_flag == "first":
+            nodes = nodes[:1]
+        elif use_flag == "all":
+            pass
+        elif use_flag == "shortest":                      
+            nodes = sorted(nodes, 
+                    key=lambda x: len(x.leaf_components()), 
+                    reverse=False)[:1]
+        elif use_flag == "longest":
+            nodes = sorted(nodes, 
+                    key=lambda x: len(x.leaf_components()), 
+                    reverse=True)[:1]
+        else:
+            nodes = [nd for nd in nodes if (not nd.flag or use_flag in nd.flag)]
+        return nodes
+
     def query(self, in_x, use_flag="first", max_depth=-1, depth=0, filter_node=True):        
         if max_depth >= 0 and depth >= max_depth:
             return [in_x]
 
         if isinstance(in_x, str):      
             nodes = self.ids_map.get(in_x, None)
-            if use_flag == "first":
-                nodes = nodes[:1]
-            elif use_flag == "all":
-                pass
-            else:
-                nodes = [nd for nd in nodes if (not nd.flag or use_flag in nd.flag)]
+            nodes = self.filter_flag(nodes, use_flag)
         else:
             nodes = [in_x]
     
@@ -73,7 +86,7 @@ class ComponentTree:
         else:
             return [in_x]
     
-    def find(self, compo, max_depth=-1, depth=0, use_flag="first", bmp_only=False):
+    def find(self, compo, max_depth=-1, depth=0, use_flag="first", bmp_only=True):
         hits = []
         bmp_pat = re.compile("[〇一-\u9fff㐀-\u4dbf豈-\ufaff]")
         characs = self.rev_map.get(compo, [])    
@@ -82,14 +95,7 @@ class ComponentTree:
                 continue
 
             nodes = self.ids_map[char_x]
-
-            # subset flags
-            if use_flag == "first":
-                nodes = nodes[:1]
-            elif use_flag == "all":
-                pass
-            else:
-                nodes = [nd for nd in nodes if (not nd.flag or use_flag in nd.flag)]
+            nodes = self.filter_flag(nodes, use_flag)
 
             for node_x in nodes:        
                 if compo in node_x.children:                    

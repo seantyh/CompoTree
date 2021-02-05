@@ -50,7 +50,7 @@ class OrthoNode:
                 return compo
         else:
             idx = idx_list[0]
-            if not isinstance(idx, StructureCursor):
+            if not isinstance(idx, StructureCursor):                
                 raise IndexError("Expect StructureCursor as index")
                         
             if self.flag and idx.flag not in self.flag:
@@ -104,6 +104,8 @@ class OrthoNode:
 
     def leaf_components(self, use_flag="first"): 
         leaves = []
+        if use_flag == "all":
+            raise ValueError("all flag is not supported in leaf_components()")
         child_variants = [
                     self.get_variants(x, use_flag)
                     for x in self.children]
@@ -118,12 +120,28 @@ class OrthoNode:
         return leaves
         
     def get_variants(self, chlist, use_flag):
-        if use_flag == "first":
+        # if chlist is not a list, there is no variant.
+        if not isinstance(chlist, list):
+            return chlist
+        
+        if use_flag == "first":            
             variants = chlist[0]
         elif use_flag == "all":
             variants = chlist
+        elif use_flag == "shortest":
+            variants = sorted(chlist, 
+                key=lambda x: len(x.leaf_components()), 
+                reverse=False)[:1]
+        elif use_flag == "longest":
+            variants = sorted(chlist, 
+                key=lambda x: len(x.leaf_components()), 
+                reverse=True)[:1]
         else:
             variants = [x for x in chlist if (not x.flag) or use_flag in x.flag]
+        
+        if len(variants) == 1:
+            variants = variants[0]
+
         return variants
 
     @classmethod
