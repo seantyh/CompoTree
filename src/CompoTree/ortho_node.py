@@ -138,8 +138,8 @@ class OrthoNode:
                 reverse=True)[:1]
         else:
             variants = [x for x in chlist if (not x.flag) or use_flag in x.flag]
-        
-        if len(variants) == 1:
+                
+        if isinstance(variants, list) and len(variants) == 1:
             variants = variants[0]
 
         return variants
