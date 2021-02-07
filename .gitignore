@@ -3,6 +3,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,visualstudiocode
 .DS_Store
 hanazono-20170904.zip
+fasttext-zh-sw/
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
