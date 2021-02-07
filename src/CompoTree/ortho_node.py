@@ -102,6 +102,10 @@ class OrthoNode:
         chlist = self.children[idx]
         return self.get_variants(chlist, use_flag)
 
+    def components(self, use_flag="first"):
+        return [self.get_variants(x, use_flag)
+                for x in self.children]
+
     def leaf_components(self, use_flag="first"): 
         leaves = []
         if use_flag == "all":
@@ -122,7 +126,7 @@ class OrthoNode:
     def get_variants(self, chlist, use_flag):
         # if chlist is not a list, there is no variant.
         if not isinstance(chlist, list):
-            return chlist
+            return chlist        
         
         if use_flag == "first":            
             variants = chlist[0]
@@ -130,11 +134,13 @@ class OrthoNode:
             variants = chlist
         elif use_flag == "shortest":
             variants = sorted(chlist, 
-                key=lambda x: len(x.leaf_components()), 
+                key=lambda x: 1 if isinstance(x, str) 
+                                else len(x.leaf_components()), 
                 reverse=False)[:1]
         elif use_flag == "longest":
             variants = sorted(chlist, 
-                key=lambda x: len(x.leaf_components()), 
+                key=lambda x: 1 if isinstance(x, str) 
+                                else len(x.leaf_components()), 
                 reverse=True)[:1]
         else:
             variants = [x for x in chlist if (not x.flag) or use_flag in x.flag]
