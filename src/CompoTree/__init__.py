@@ -4,3 +4,4 @@ from .struct_cursor import StructureCursor, IDC
 from .radicals import Radicals
 from .ts_variants import TSVariants
 from .char_lexicon import CharLexicon
+from .found_results import CTFounds

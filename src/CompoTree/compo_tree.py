@@ -76,7 +76,7 @@ class ComponentTree:
             for node_x in nodes:                
                 if self.is_valid_node(node_x) or not filter_node:                      
                     node_y = deepcopy(node_x)                   
-                    node_y.children = [self.query(x, use_flag, depth+1, max_depth) 
+                    node_y.children = [self.query(x, use_flag, max_depth, depth+1) 
                                        for x in node_y.children]                    
                     ret_nodes.append(node_y)
             if ret_nodes:
