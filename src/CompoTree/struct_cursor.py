@@ -18,9 +18,9 @@ class StructureCursor:
         glyph_str = f"({self.glyph})" if self.glyph else ""
         return "{}{}{}{}".format(self.idc, self.pos, self.glyph, flag_str)
     
-    def match(self, idc="", pos="", flag=""):
+    def match(self, idc="", pos=-1, flag=""):
         is_match = True
         if idc: is_match &= (idc==self.idc)
-        if pos: is_match &= (pos==self.pos)
+        if pos >= 0: is_match &= (pos==self.pos)
         if flag: is_match &= (flag in self.flag)
         return is_match
