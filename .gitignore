@@ -4,6 +4,7 @@
 .DS_Store
 hanazono-20170904.zip
 fasttext-zh-sw/
+data/exp/
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
