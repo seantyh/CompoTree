@@ -114,3 +114,21 @@ class ComponentTree:
                         rec_cursor = rec_hit_x[1] + struct_cursor
                         hits.append((rec_hit_x[0], rec_cursor))
         return hits
+    
+    def mutual_friends(self, compo1, compo2):
+        print("[WARNING] current implementation only consider two-component characters "
+              "with target at the first position")
+        mfriends = []
+        for ch in (x[0] for x in self.find(compo1, max_depth=1, use_flag="shortest")):
+            node = self.query(ch, use_flag="shortest", max_depth=1)[0]
+            if isinstance(node, str):
+                continue
+            if len(node.components()) != 2 and node.get_component(0) != compo1:
+                continue
+            
+            friends = [x[0] for x in self.find(node.get_component(1), use_flag="shortest", max_depth=1)]
+            for friend_x in friends:
+                fr_node = self.query(friend_x, use_flag="shortest", max_depth=1)[0]
+                if not isinstance(fr_node, str) and fr_node.get_component(0) == compo2:
+                    mfriends.append((ch, friend_x))
+        return mfriends
