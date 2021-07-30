@@ -1,6 +1,6 @@
 
 from CompoTree.ts_variants import TSVariants
-
+import re
 
 class CTFounds:
     def __init__(self, hits_list):
@@ -18,6 +18,11 @@ class CTFounds:
     def filter_with_lexicon(self, lexicon):
         res = [x for x in self.results
                if x[0] in lexicon]
+        return CTFounds(res)
+
+    def filter_bmp(self):
+        bmp_pat = re.compile("[〇一-\u9fff㐀-\u4dbf豈-\ufaff]")
+        res = [x for x in self.results if bmp_pat.match(x[0])]
         return CTFounds(res)
 
     def simplified_only(self):

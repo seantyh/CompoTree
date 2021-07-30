@@ -5,6 +5,7 @@ from copy import deepcopy
 from .struct_cursor import StructureCursor
 from .ortho_node import OrthoNode
 from .load_data import load_idsmap
+from .found_results import CTFounds
 
 class ComponentTree:
     def __init__(self, ids_map):
@@ -86,18 +87,20 @@ class ComponentTree:
         else:
             return [in_x]
     
-    def find(self, compo, max_depth=-1, depth=0, use_flag="first", bmp_only=True):
+    def find(self, compo, max_depth=-1, depth=0, use_flag="first", 
+        bmp_only=False, ret_CTFounds=False):
+        # note that bmp_only options apply to all characters along the hierarchy
         hits = []
         bmp_pat = re.compile("[〇一-\u9fff㐀-\u4dbf豈-\ufaff]")
-        characs = self.rev_map.get(compo, [])    
+        characs = self.rev_map.get(compo, [])        
         for char_x in characs:
             if bmp_only and not bmp_pat.match(char_x):
                 continue
 
             nodes = self.ids_map[char_x]
             nodes = self.filter_flag(nodes, use_flag)
-
-            for node_x in nodes:        
+            
+            for node_x in nodes:                        
                 if compo in node_x.children:                    
                     struct_cursor = [StructureCursor(
                                         node_x.idc, 
@@ -113,7 +116,11 @@ class ComponentTree:
                         rec_char = rec_hit_x[0]
                         rec_cursor = rec_hit_x[1] + struct_cursor
                         hits.append((rec_hit_x[0], rec_cursor))
-        return hits
+        if depth == 0 and ret_CTFounds:
+            return CTFounds(hits)
+        else:
+            return hits
+        
     
     def mutual_friends(self, compo1, compo2):
         print("[WARNING] current implementation only consider two-component characters "
