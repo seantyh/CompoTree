@@ -28,7 +28,7 @@ class CharLexicon:
 
     @classmethod
     def load(cls, path=None, topn=5000):
-        data_dir = Path(__file__).parent / "../../data"        
+        data_dir = Path(__file__).parent / "data"        
         with (data_dir/"asbc5_characters.pkl").open("rb") as fin:
             lexicon = pickle.load(fin)
         freq_chars = sorted(lexicon.keys(), key=lexicon.get, reverse=True)

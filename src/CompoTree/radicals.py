@@ -37,7 +37,7 @@ class Radicals:
     @classmethod
     def load(cls, data_dir=None):
         if not data_dir:
-            data_dir = Path(__file__).parent / "../../data"
+            data_dir = Path(__file__).parent / "data"
         radical_path = data_dir / "CJKRadicals.txt"
         irg_path = data_dir / "Unihan_IRGSOurces_kRSUnicode.txt"
         radical_map = load_radical_map(radical_path)

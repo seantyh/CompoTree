@@ -4,7 +4,7 @@ from .ortho_node import OrthoNode
 
 def load_idsmap(ids_path=None):
     if not ids_path:
-        ids_path = Path(__file__).parent / "../../data/ids.txt"
+        ids_path = Path(__file__).parent / "data/ids.txt"
 
     fin = open(ids_path, "r", encoding="UTF-8")
     ids_map = {}
