@@ -26,7 +26,7 @@ class TSVariants:
     @classmethod
     def load(self, var_path=None):
         if var_path is None:
-            var_path = Path(__file__).parent / "../../data/Unihan_Variants.txt"
+            var_path = Path(__file__).parent / "data/Unihan_Variants.txt"
         ts_map, st_map = load_var_data(var_path)
         return TSVariants(ts_map, st_map)
     
