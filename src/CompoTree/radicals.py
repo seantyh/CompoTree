@@ -71,6 +71,19 @@ class Radicals:
     def get_semvar_inst(self):
         if not self.semvar:
             self.semvar = SemanticVariants.load()
+            self.semvar.var_map.update({
+                "𧾷": ["足"],
+                "阝": ["阜", "邑"],
+                "王": ["玉"],
+                "月": ["肉"],
+                "朩": ["木"],
+                "覀": ["襾"],
+                "户": ["戶"],
+                "宀": ["穴"],
+                "匚": ["匸"],
+                "罒": ["网"],
+
+            })
         return self.semvar
     
     def locate_radical(
