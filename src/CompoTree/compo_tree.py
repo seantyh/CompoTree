@@ -1,6 +1,6 @@
 import re
 from itertools import chain
-from typing import List
+from typing import List, Union
 from copy import deepcopy
 from .struct_cursor import StructureCursor
 from .ortho_node import OrthoNode
@@ -61,7 +61,7 @@ class ComponentTree:
             nodes = [nd for nd in nodes if (not nd.flag or use_flag in nd.flag)]
         return nodes
 
-    def query(self, in_x, use_flag="first", max_depth=-1, depth=0, filter_node=True):        
+    def query(self, in_x: str, use_flag="first", max_depth=-1, depth=0, filter_node=True):        
         if max_depth >= 0 and depth >= max_depth:
             return [in_x]
 
@@ -73,7 +73,7 @@ class ComponentTree:
     
         
         if nodes:      
-            ret_nodes = []
+            ret_nodes: List[Union[OrthoNode, str]] = []
             for node_x in nodes:                
                 if self.is_valid_node(node_x) or not filter_node:                      
                     node_y = deepcopy(node_x)                   

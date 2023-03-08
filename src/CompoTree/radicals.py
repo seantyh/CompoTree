@@ -1,4 +1,10 @@
 from pathlib import Path
+from typing import Tuple, Optional
+from .sem_variants import SemanticVariants
+
+RadicalLocation = int
+RadicalComponent = Optional[str]
+RadicalNorm = str
 
 def load_radical_map(radical_path):
     radical_map = {}
@@ -33,6 +39,7 @@ class Radicals:
         self.radical_map = radical_map
         self.rs_index = rs_index
         self.ts_radicals = self.build_radical_variants(radical_map)
+        self.semvar = None
 
     @classmethod
     def load(cls, data_dir=None):
@@ -52,7 +59,6 @@ class Radicals:
             rad = (self.ts_radicals.get(rad[0], rad[0]), rad[1])
         return rad
         
-
     def build_radical_variants(self, radical_map):
         rad_vars = {}
         for rid, radical in radical_map.items():
@@ -61,3 +67,19 @@ class Radicals:
                 trad_radical = radical_map[rid[:-1]]
                 rad_vars[radical] = trad_radical
         return rad_vars
+    
+    def get_semvar_inst(self):
+        if not self.semvar:
+            self.semvar = SemanticVariants.load()
+        return self.semvar
+    
+    def locate_radical(
+            self, ch, compos
+            ) -> Tuple[RadicalLocation, RadicalComponent, RadicalNorm]:
+        norm_radical = self.query(ch)[0]
+        semvar_inst = self.get_semvar_inst()
+        for compo_i, compo_x in enumerate(compos):
+            vars = semvar_inst.variants(compo_x)
+            if norm_radical==compo_x or norm_radical in vars:
+                return compo_i, compo_x, norm_radical
+        return -1, None, norm_radical
